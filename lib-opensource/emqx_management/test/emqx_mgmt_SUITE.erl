@@ -294,6 +294,22 @@ t_listeners_cmd_new(_) ->
        "Stop mqtt:wss:external listener on 0.0.0.0:8084 successfully.\n",
        emqx_mgmt_cli:listeners(["stop", "mqtt:wss:external"])
       ),
+    ?assertEqual(
+       emqx_mgmt_cli:listeners(["restart", "ws", "8083"]),
+       "Restarted ws listener on 8083 successfully.\n"
+      ),
+    ?assertEqual(
+       emqx_mgmt_cli:listeners(["restart", "wss", "8084"]),
+       "Restarted wss listener on 8084 successfully.\n"
+      ),
+    ?assertEqual(
+       emqx_mgmt_cli:listeners(["restart", "tcp", "0.0.0.0:1883"]),
+       "Restarted tcp listener on 0.0.0.0:1883 successfully.\n"
+      ),
+    ?assertEqual(
+       emqx_mgmt_cli:listeners(["restart", "ssl", "8883"]),
+       "Restarted ssl listener on 8883 successfully.\n"
+      ),
     unmock_print().
 
 t_plugins_cmd(_) ->
