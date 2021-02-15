@@ -221,12 +221,22 @@ setting_peercert_infos(Peercert, ClientInfo, Options) ->
     {DN, CN} = {esockd_peercert:subject(Peercert),
                 esockd_peercert:common_name(Peercert)},
     Username = case proplists:get_value(peer_cert_as_username, Options) of
-                   cn  -> CN;
-                   dn  -> DN;
-                   crt -> Peercert;
+                   cn     -> CN;
+                   dn     -> DN;
+                   crt    -> Peercert;
+                   pem    -> base64:encode(Peercert);
+                   md5 -> emqx_passwd:hash(md5, Peercert);
                    _   -> undefined
                end,
-    ClientInfo#{username => Username, dn => DN, cn => CN}.
+    ClientId = case proplists:get_value(peer_cert_as_clientid, Options) of
+                   cn     -> CN;
+                   dn     -> DN;
+                   crt    -> Peercert;
+                   pem    -> base64:encode(Peercert);
+                   md5 -> emqx_passwd:hash(md5, Peercert);
+                   _   -> undefined
+               end,
+    ClientInfo#{username => Username, clientid => ClientId, dn => DN, cn => CN}.
 
 take_ws_cookie(ClientInfo, ConnInfo) ->
     case maps:take(ws_cookie, ConnInfo) of
